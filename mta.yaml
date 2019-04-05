@@ -14,6 +14,39 @@ modules:
         properties:
           key: ServiceName_1
           service: '~{products-service-name}'
+  - name: core_xsjs
+    type: nodejs
+    path: core_xsjs
+    provides:
+      - name: core_xsjs_api
+        properties:
+          url: '${default-url}'
+    requires:
+      - name: hdi_db
+      - name: db
+      - name: UAA-service
+  - name: web
+    type: html5
+    path: web
+    requires:
+      - name: UAA-service
+      - name: core_xsjs_api
+        group: destinations
+        properties:
+          name: core-xsjs-backend
+          url: '~{url}'
+          forwardAuthToken: true
+  - name: ui5
+    type: html5
+    path: ui5
+    requires:
+      - name: UAA-service
+      - name: core_xsjs_api
+        group: destinations
+        properties:
+          name: core-xsjs-backend
+          url: '~{url}'
+          forwardAuthToken: true
 resources:
   - name: hdi_db
     parameters:
@@ -28,3 +61,7 @@ resources:
     properties:
       products-service-name: '${service-name}'
     type: org.cloudfoundry.existing-service
+  - name: UAA-service
+    type: com.sap.xs.uaa-space
+    parameters:
+      config-path: ./xs-security.json

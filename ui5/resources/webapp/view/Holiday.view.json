@@ -1,0 +1,12 @@
+{
+	"Type": "sap.ui.core.mvc.JSONView",
+	"controllerName": "sapui5.ui5.controller.Holiday",
+	"content": [{
+		"Type": "sap.m.App",
+		"pages": [{
+			"Type": "sap.m.Page",
+			"title": "{i18n>title}",
+			"content": []
+		}]
+	}]
+}
