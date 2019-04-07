@@ -1,7 +1,7 @@
 {
 	"_version": "1.5.0",
 	"sap.app": {
-		"id": "sapui5.ui5",
+		"id": "sapui5.holiday.App.Holiday",
 		"type": "application",
 		"i18n": "i18n/i18n.properties",
 		"applicationVersion": {
@@ -38,8 +38,8 @@
 
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sapui5.ui5.view.Holiday",
-			"type": "JSON"
+			"viewName": "sapui5.holiday.App.Holiday.view.Master",
+			"type": "JS"
 		},
 		"dependencies": {
 			"minUI5Version": "1.30.0",
@@ -61,7 +61,7 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "sapui5.ui5.i18n.i18n"
+					"bundleName": "sapui5.holiday.App.Holiday.i18n.i18n"
 				}
 			}
 		},
@@ -75,7 +75,7 @@
 				"routerClass": "sap.m.routing.Router",
 				"viewType": "XML",
 				"async": true,
-				"viewPath": "sapui5.ui5.view",
+				"viewPath": "sapui5.holiday.App.Holiday.view",
 				"controlAggregation": "pages",
 				"controlId": "idAppControl"
 			},

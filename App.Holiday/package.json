@@ -1,5 +1,5 @@
 {
-	"name": "sapui5-approuter",
+	"name": "sapui5.holiday-approuter",
 	"engines": {
 		"node": ">=4.0.0 <9.0.0"
 	},

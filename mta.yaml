@@ -36,9 +36,9 @@ modules:
           name: core-xsjs-backend
           url: '~{url}'
           forwardAuthToken: true
-  - name: ui5
+  - name: App.Holiday
     type: html5
-    path: ui5
+    path: App.Holiday
     requires:
       - name: UAA-service
       - name: core_xsjs_api
