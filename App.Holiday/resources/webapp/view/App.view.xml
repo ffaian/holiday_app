@@ -6,7 +6,7 @@
 	    <pages>
 	        <mvc:JSView  
 	            id="masterPage"
-			    viewName="sapui5.holiday.App.view.Master" />    
+			    viewName="sapui5.holiday.App.Holiday.view.Master" />    
 	    </pages>
     </App>
 </mvc:View>

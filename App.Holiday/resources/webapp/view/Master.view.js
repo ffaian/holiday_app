@@ -14,6 +14,10 @@ sap.ui.jsview("sapui5.holiday.App.Holiday.view.Master", {
 	 */
 	createContent: function (oController) {
 
+		var app = new sap.m.App("myApp", {
+			initialPage: "oPage"
+		});
+
 		// searching combobox
 		var oSearch = [{
 			"KEY": "1",
@@ -148,10 +152,10 @@ sap.ui.jsview("sapui5.holiday.App.Holiday.view.Master", {
 		});
 
 		var oBar = new sap.m.Bar({
-//			contentLeft: [new sap.m.Image({
-//				src: "/sap/hana/ide/common/images/favicon.ico",
-//				height: "45px"
-//			})],
+			//			contentLeft: [new sap.m.Image({
+			//				src: "/sap/hana/ide/common/images/favicon.ico",
+			//				height: "45px"
+			//			})],
 			contentMiddle: [new sap.m.Label({
 				text: "CRUD: Holidays Calendar",
 				textAlign: "Left",
@@ -164,13 +168,17 @@ sap.ui.jsview("sapui5.holiday.App.Holiday.view.Master", {
 				icon: "sap-icon://log",
 				tooltip: "Logout",
 				press: function () {
-//					oController.mySystemInfo.Systemlogout();
+					//					oController.mySystemInfo.Systemlogout();
 				}
 			})]
 		});
 
 		oPageMaster.setCustomHeader(oBar);
-		return oPageMaster;
+//		return oPageMaster;
+		
+		app.addPage(oPageMaster);
+		return app;		
+		
 	}
 
 });
