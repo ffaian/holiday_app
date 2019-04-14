@@ -168,7 +168,7 @@ sap.ui.jsview("sapui5.holiday.App.Holiday.view.Master", {
 				icon: "sap-icon://log",
 				tooltip: "Logout",
 				press: function () {
-					//					oController.mySystemInfo.Systemlogout();
+										oController.mySystemInfo.Systemlogout();
 				}
 			})]
 		});
