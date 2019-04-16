@@ -94,6 +94,25 @@ sap.ui.define([
 
 				// System Info
 				this.mySystemInfo = new SystemInfo(); // declare
+
+				//var oUserModel = new sap.ui.model.json.JSONModel();
+				//oUserModel.loadData("/services/userapi/currentUser", "GET", false);
+
+				sap.ui.getCore().byId("myUserLabel").bindProperty("text", {
+					parts: [{
+						path: "/session/0/UserName"
+					}, {
+						path: "/session/0/Language"
+					}],
+					formatter: function (user, lan) {
+						return user + " | " + lan;
+					},
+				});
+				sap.ui.getCore().byId("myUserLabel").setModel(oModel_User);
+
+				//				new sap.ui.model.json.JSONModel("/services/userapi/currentUser");
+				//				sap.ui.getCore().setModel(userModel, "userapi");
+
 			},
 
 			onListPress: function (oEvent) {
@@ -116,7 +135,7 @@ sap.ui.define([
 					//						window.oJSView.getController().mySystemInfo.CheckConnection();
 					var tpmla = oEvent.getParameter("newValue");
 					var filters = new Array();
-					var sSearchID = oSearchCombo.getSelectedKey();
+					var sSearchID = sap.ui.getCore().byId("mySearchCombo").getSelectedKey();
 					switch (sSearchID) {
 					case "1":
 						var oFilter = new sap.ui.model.Filter("DATE",
@@ -164,6 +183,216 @@ sap.ui.define([
 				} else {
 					oEvent.getSource().setValueState("None");
 				}
+			},
+
+			/** *** EDIT Operation **** **/
+			openUpdateDialog: function (oController, oIndex) {
+				//window.oJSView.getController().mySystemInfo.CheckConnection();
+				var openUpdateDialog = new sap.m.Dialog();
+				openUpdateDialog.setTitle("Edit Record");
+				openUpdateDialog.setContentWidth("600px");
+				var oModel = sap.ui.getCore().byId("mytable").getModel();
+				var oItems = sap.ui.getCore().byId("mytable").getItems();
+				// set values
+				this.oHolidayCombo.setSelectedKey(oModel.getProperty("HOLIDAY_ID", oItems[oIndex].getBindingContext()));
+				var oSimpleForm = new sap.ui.layout.form.SimpleForm({
+					editable: true,
+					maxContainerCols: 2,
+					content: [
+						new sap.m.Title({
+							text: "Holiday Information",
+							titleStyle: sap.ui.core.TitleLevel.H2
+						}),
+						new sap.m.Label({
+							text: "Date"
+						}), new sap.m.Input({
+							value: oModel.getProperty("DATE", oItems[oIndex].getBindingContext()),
+							editable: false
+						}), new sap.m.Label({
+							text: "Province"
+						}), new sap.m.Input({
+							value: this.formatter.formatProvince(oModel.getProperty("PROVINCE", oItems[oIndex].getBindingContext())),
+							editable: false
+						}), new sap.m.Label({
+							text: "Holiday",
+							required: true
+						}), this.oHolidayCombo,
+						new sap.m.Label({
+							text: ""
+						})
+					]
+				});
+				openUpdateDialog.addContent(oSimpleForm);
+				openUpdateDialog.addButton(new sap.m.Button({
+					type: "Reject",
+					text: "Cancel",
+					press: function () {
+						openUpdateDialog.close();
+					}
+				}));
+				openUpdateDialog.addButton(new sap.m.Button({
+					text: "Confirm",
+					type: "Accept",
+					press: function () {
+						if (oController.onValidate(openUpdateDialog.getId()) &&
+							sap.ui.getCore().byId("myHolidayCombo").getSelectedItem()) {
+							//window.oJSView.getController().mySystemInfo.CheckConnection();
+							var oEntry = {};
+							oEntry.DATE = oModel.getProperty("DATE", oItems[oIndex].getBindingContext());
+							oEntry.PROVINCE = oModel.getProperty("PROVINCE", oItems[oIndex].getBindingContext());
+							oEntry.HOLIDAY_ID = sap.ui.getCore().byId("myHolidayCombo").getSelectedItem().getBindingContext().getObject().HOLIDAY_ID;
+							// Post data to the server
+							sap.ui.getCore().byId("mytable").getModel().loadData("../xsjs/editdata.xsjs", oEntry,
+								true, 'POST');
+							// Update JSON model 
+							oModel.getData().Holidays[oIndex].HOLIDAY_ID = oEntry.HOLIDAY_ID;
+							oModel.refresh(true);
+							openUpdateDialog.close();
+						} else {
+							sap.m.MessageToast.show("Please check the form entries");
+						}
+					}
+				}));
+				openUpdateDialog.open();
+			},
+
+			/** *** CREATE Operation **** **/
+			openCreateDialog: function (oController) {
+				//window.oJSView.getController().mySystemInfo.CheckConnection();
+				var oCreateDialog = new sap.m.Dialog();
+				oCreateDialog.setTitle("Create Record");
+				oCreateDialog.setContentWidth("600px");
+				// default values
+				var oDateFormat = sap.ui.core.format.DateFormat.getInstance({
+					pattern: "yyyy-MM-dd"
+				});
+				this.oModelVal.setProperty("/myDate", oDateFormat.format(new Date()));
+				this.oProvincescombo.setSelectedKey("99");
+				this.oHolidayCombo.setSelectedKey("1");
+				var oSimpleForm = new sap.ui.layout.form.SimpleForm({
+					editable: true,
+					maxContainerCols: 2,
+					content: [
+						new sap.m.Title({
+							text: "Holiday Information",
+							titleStyle: sap.ui.core.TitleLevel.H2
+						}),
+						new sap.m.Label({
+							text: "Date",
+							required: true
+						}), this.oInputDate,
+						new sap.m.Label({
+							text: ""
+						}), new sap.m.Label({
+							text: "Province",
+							required: true
+						}), this.oProvincescombo,
+						new sap.m.Label({
+							text: ""
+						}), new sap.m.Label({
+							text: "Holiday",
+							required: true
+						}), this.oHolidayCombo,
+						new sap.m.Label({
+							text: ""
+						})
+					]
+				});
+
+				oCreateDialog.addContent(oSimpleForm);
+				oCreateDialog.addButton(new sap.m.Button({
+					type: "Reject",
+					text: "Cancel",
+					press: function () {
+						oCreateDialog.close();
+					}
+				}));
+				oCreateDialog.addButton(new sap.m.Button({
+					text: "Confirm",
+					type: "Accept",
+					press: function () {
+						if (oController.onValidate(oCreateDialog.getId()) &&
+							sap.ui.getCore().byId("myHolidayCombo").getSelectedItem() &&
+							sap.ui.getCore().byId("myProvinceCombo").getSelectedItem()) {
+							//window.oJSView.getController().mySystemInfo.CheckConnection();
+							var oEntry = {};
+							oEntry.DATE = sap.ui.getCore().byId("myDateInput").getValue();
+							oEntry.PROVINCE = sap.ui.getCore().byId("myProvinceCombo").getSelectedItem().getBindingContext().getObject().REGION;
+							oEntry.HOLIDAY_ID = sap.ui.getCore().byId("myHolidayCombo").getSelectedItem().getBindingContext().getObject().HOLIDAY_ID;
+							// Post data to the server
+							sap.ui.getCore().byId("mytable").getModel().loadData("../xsjs/adddata.xsjs", oEntry,
+								true, 'POST');
+							sap.ui.getCore().byId("mytable").getModel().getData().Holidays.push(oEntry);
+							sap.ui.getCore().byId("mytable").getModel().refresh(true);
+							oCreateDialog.close();
+						} else {
+							sap.m.MessageToast.show("Please check the form entries");
+						}
+					}
+				}));
+				oCreateDialog.open();
+			},
+
+			/** *** DELETE Operation **** **/
+			openDeleteDialog: function (oIndex) {
+				//window.oJSView.getController().mySystemInfo.CheckConnection();
+				var openDeleteDialog = new sap.m.Dialog();
+				openDeleteDialog.setTitle("Delete Record");
+				openDeleteDialog.setContentWidth("600px");
+				var oModel = sap.ui.getCore().byId("mytable").getModel();
+				var oItems = sap.ui.getCore().byId("mytable").getItems();
+				var oSimpleForm = new sap.ui.layout.form.SimpleForm({
+					editable: true,
+					maxContainerCols: 2,
+					content: [
+						new sap.m.Title({
+							text: "Holiday Information",
+							titleStyle: sap.ui.core.TitleLevel.H2
+						}),
+						new sap.m.Label({
+							text: "Date"
+						}), new sap.m.Input({
+							value: oModel.getProperty("DATE", oItems[oIndex].getBindingContext()),
+							editable: false
+						}), new sap.m.Label({
+							text: "Province"
+						}), new sap.m.Input({
+							value: this.formatter.formatProvince(oModel.getProperty("PROVINCE", oItems[oIndex].getBindingContext())),
+							editable: false
+						}), new sap.m.Label({
+							text: "Holiday"
+						}), new sap.m.Input({
+							value: this.formatter.formatHoliday(oModel.getProperty("HOLIDAY_ID", oItems[oIndex].getBindingContext())),
+							editable: false
+						})
+					]
+				});
+				openDeleteDialog.addContent(oSimpleForm);
+				openDeleteDialog.addButton(new sap.m.Button({
+					type: "Reject",
+					text: "Cancel",
+					press: function () {
+						openDeleteDialog.close();
+					}
+				}));
+				openDeleteDialog.addButton(new sap.m.Button({
+					text: "Confirm",
+					type: "Accept",
+					press: function () {
+						//window.oJSView.getController().mySystemInfo.CheckConnection();
+						var oEntry = {};
+						oEntry.DATE = oModel.getProperty("DATE", oItems[oIndex].getBindingContext());
+						oEntry.PROVINCE = oModel.getProperty("PROVINCE", oItems[oIndex].getBindingContext());
+						oEntry.HOLIDAY_ID = oModel.getProperty("HOLIDAY_ID", oItems[oIndex].getBindingContext());
+						// Post data to the server
+						oModel.loadData("../xsjs/deletedata.xsjs", oEntry,
+							true, 'POST');
+						oModel.getData().Holidays.splice(oIndex, 1);
+						oModel.refresh(true);
+						openDeleteDialog.close();
+					}
+				}));
+				openDeleteDialog.open();
 			}
 
 		});

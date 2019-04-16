@@ -152,10 +152,10 @@ sap.ui.jsview("sapui5.holiday.App.Holiday.view.Master", {
 		});
 
 		var oBar = new sap.m.Bar({
-			//			contentLeft: [new sap.m.Image({
-			//				src: "/sap/hana/ide/common/images/favicon.ico",
-			//				height: "45px"
-			//			})],
+						contentLeft: [new sap.m.Image({
+							src: "../images/favicon.ico",
+							height: "45px"
+						})],
 			contentMiddle: [new sap.m.Label({
 				text: "CRUD: Holidays Calendar",
 				textAlign: "Left",
@@ -168,7 +168,7 @@ sap.ui.jsview("sapui5.holiday.App.Holiday.view.Master", {
 				icon: "sap-icon://log",
 				tooltip: "Logout",
 				press: function () {
-										oController.mySystemInfo.Systemlogout();
+					window.location.href = "/my/logout";
 				}
 			})]
 		});

@@ -10,6 +10,9 @@
 		"source": "(.*)(.xsodata)",
 		"destination": "core-xsjs-backend",
 		"authenticationType": "xsuaa"
-
-	}]
+	}],
+	"logout": {
+		"logoutPage": "/logout.html",
+		"logoutEndpoint": "/my/logout"
+	}
 }
