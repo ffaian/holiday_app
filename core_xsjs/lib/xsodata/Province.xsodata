@@ -1,5 +1,0 @@
-service {
-	"holiday" as "Holiday";
-
-	"holiday_id" as "Holiday_md";
-}

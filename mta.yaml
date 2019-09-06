@@ -47,6 +47,17 @@ modules:
           name: core-xsjs-backend
           url: '~{url}'
           forwardAuthToken: true
+  - name: Holiday.App.OData
+    type: html5
+    path: Holiday.App.OData
+    requires:
+      - name: UAA-service
+      - name: core_xsjs_api
+        group: destinations
+        properties:
+          name: core-xsjs-backend
+          url: '~{url}'
+          forwardAuthToken: true
 resources:
   - name: hdi_db
     parameters:
