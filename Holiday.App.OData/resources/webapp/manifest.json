@@ -12,6 +12,15 @@
 		"sourceTemplate": {
 			"id": "hanatemplates.basicSAPUI5ApplicationProject",
 			"version": "0.0.0"
+		},
+		"dataSources": {
+			"HolidayService": {
+				"uri": "/xsodata/Holiday.xsodata/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0"
+				}
+			}
 		}
 	},
 
@@ -62,6 +71,17 @@
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
 					"bundleName": "sapui5.holiday.App.Holiday.OData.Holiday.App.OData.i18n.i18n"
+				}
+			},
+			"HolidayModel": {
+				"dataSource": "HolidayService",
+				"type": "sap.ui.model.odata.v2.ODataModel",
+				"preload": true,
+				"settings": {
+					"useBatch": false,
+					"json": true,
+					"defaultBindingMode": "TwoWay",
+					"defaultUpdateMethod": "PUT"
 				}
 			}
 		},

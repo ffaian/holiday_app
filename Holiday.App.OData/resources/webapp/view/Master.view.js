@@ -62,7 +62,14 @@ sap.ui.jsview("sapui5.holiday.App.Holiday.OData.Holiday.App.OData.view.Master", 
 		var oTemplate = new sap.m.ColumnListItem({
 			press: [oController.onListPress, oController],
 			cells: [new sap.m.ObjectIdentifier({
-				text: "{DATE}"
+				text: {
+					path: "DATE",
+					// formatter : oController.formatter.formatODataDate,
+					type: 'sap.ui.model.odata.type.DateTime',
+					constraints: {
+						displayFormat: 'Date'
+					}
+				}
 			}), new sap.m.ObjectIdentifier({
 				text: {
 					path: "PROVINCE",
@@ -143,6 +150,7 @@ sap.ui.jsview("sapui5.holiday.App.Holiday.OData.Holiday.App.OData.view.Master", 
 			columns: aColumns,
 			headerToolbar: oToolBar
 		});
+
 		oTable.setMode(sap.m.ListMode.SingleSelectMaster);
 		oTable.bindItems("/Holidays", oTemplate);
 
@@ -157,7 +165,7 @@ sap.ui.jsview("sapui5.holiday.App.Holiday.OData.Holiday.App.OData.view.Master", 
 				height: "45px"
 			})],
 			contentMiddle: [new sap.m.Label({
-				text: "CRUD: Holidays Calendar",
+				text: "CRUD: Holidays Calendar (ODATA V2)",
 				textAlign: "Left",
 				design: "Bold"
 			})],

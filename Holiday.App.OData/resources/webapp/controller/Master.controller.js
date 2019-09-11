@@ -16,6 +16,9 @@ sap.ui.define([
 
 		onInit: function () {
 
+			// var HolidayModel =
+			// 	this.getOwnerComponent().getModel("HolidayModel");
+
 			// Global variable	
 			window.oJSView = this.getView();
 
@@ -205,7 +208,13 @@ sap.ui.define([
 					new sap.m.Label({
 						text: "Date"
 					}), new sap.m.Input({
-						value: oModel.getProperty("DATE", oItems[oIndex].getBindingContext()),
+						value: {
+							value: oModel.getProperty("DATE", oItems[oIndex].getBindingContext()),
+							type: 'sap.ui.model.odata.type.DateTime',
+							constraints: {
+								displayFormat: 'Date'
+							}
+						},
 						editable: false
 					}), new sap.m.Label({
 						text: "Province"
@@ -240,12 +249,30 @@ sap.ui.define([
 						oEntry.DATE = oModel.getProperty("DATE", oItems[oIndex].getBindingContext());
 						oEntry.PROVINCE = oModel.getProperty("PROVINCE", oItems[oIndex].getBindingContext());
 						oEntry.HOLIDAY_ID = sap.ui.getCore().byId("myHolidayCombo").getSelectedItem().getBindingContext().getObject().HOLIDAY_ID;
+						oModel.setHeaders({
+							"content-type": "application/json;charset=utf-8"
+						});
 						// Post data to the server
-						sap.ui.getCore().byId("mytable").getModel().loadData("../xsjs/editdata.xsjs", oEntry,
-							true, 'POST');
-						// Update JSON model 
-						oModel.getData().Holidays[oIndex].HOLIDAY_ID = oEntry.HOLIDAY_ID;
-						oModel.refresh(true);
+						// this is old method using XSJS (Java-side) file
+						// sap.ui.getCore().byId("mytable").getModel().loadData("../xsjs/editdata.xsjs", oEntry,
+						// 	true, 'POST');
+						// // Update JSON model 
+						// oModel.getData().Holidays[oIndex].HOLIDAY_ID = oEntry.HOLIDAY_ID;
+						// oModel.refresh(true);
+
+						// this is new method using odata service notation
+						//var oTable = sap.ui.getCore().byId("mytable");
+						//var oContext = oTable.getContextByIndex(oIndex); 
+						oModel.update(oItems[oIndex].getBindingContext().sPath, oEntry, {
+							success: function (oData) {
+								//console.log(oData);
+								sap.m.MessageToast.show("Record Updated Successfully");
+
+							},
+							error: function (err) {
+								sap.m.MessageToast.show("Error" + err);
+							}
+						});
 						openUpdateDialog.close();
 					} else {
 						sap.m.MessageToast.show("Please check the form entries");
@@ -258,6 +285,7 @@ sap.ui.define([
 		/** *** CREATE Operation **** **/
 		openCreateDialog: function (oController) {
 			//window.oJSView.getController().mySystemInfo.CheckConnection();
+			var oModel = sap.ui.getCore().byId("mytable").getModel();
 			var oCreateDialog = new sap.m.Dialog();
 			oCreateDialog.setTitle("Create Record");
 			oCreateDialog.setContentWidth("600px");
@@ -315,14 +343,26 @@ sap.ui.define([
 						sap.ui.getCore().byId("myProvinceCombo").getSelectedItem()) {
 						//window.oJSView.getController().mySystemInfo.CheckConnection();
 						var oEntry = {};
-						oEntry.DATE = sap.ui.getCore().byId("myDateInput").getValue();
+						oEntry.DATE = sap.ui.getCore().byId("myDateInput").getDateValue();
 						oEntry.PROVINCE = sap.ui.getCore().byId("myProvinceCombo").getSelectedItem().getBindingContext().getObject().REGION;
 						oEntry.HOLIDAY_ID = sap.ui.getCore().byId("myHolidayCombo").getSelectedItem().getBindingContext().getObject().HOLIDAY_ID;
+						oModel.setHeaders({
+							"content-type": "application/json;charset=utf-8"
+						});
 						// Post data to the server
-						sap.ui.getCore().byId("mytable").getModel().loadData("../xsjs/adddata.xsjs", oEntry,
-							true, 'POST');
-						sap.ui.getCore().byId("mytable").getModel().getData().Holidays.push(oEntry);
-						sap.ui.getCore().byId("mytable").getModel().refresh(true);
+						// sap.ui.getCore().byId("mytable").getModel().loadData("../xsjs/adddata.xsjs", oEntry,
+						// 	true, 'POST');
+						// sap.ui.getCore().byId("mytable").getModel().getData().Holidays.push(oEntry);
+						// sap.ui.getCore().byId("mytable").getModel().refresh(true);
+						// v2
+						oModel.create("/Holidays", oEntry, {
+							success: function () {
+								sap.m.MessageToast.show("Record Created Successfully");
+							},
+							error: function (err) {
+								sap.m.MessageToast.show("Error: " + err);
+							}
+						});
 						oCreateDialog.close();
 					} else {
 						sap.m.MessageToast.show("Please check the form entries");
@@ -351,7 +391,13 @@ sap.ui.define([
 					new sap.m.Label({
 						text: "Date"
 					}), new sap.m.Input({
-						value: oModel.getProperty("DATE", oItems[oIndex].getBindingContext()),
+						value: {
+							value: oModel.getProperty("DATE", oItems[oIndex].getBindingContext()),
+							type: 'sap.ui.model.odata.type.DateTime',
+							constraints: {
+								displayFormat: 'Date'
+							}
+						},
 						editable: false
 					}), new sap.m.Label({
 						text: "Province"
@@ -384,10 +430,20 @@ sap.ui.define([
 					oEntry.PROVINCE = oModel.getProperty("PROVINCE", oItems[oIndex].getBindingContext());
 					oEntry.HOLIDAY_ID = oModel.getProperty("HOLIDAY_ID", oItems[oIndex].getBindingContext());
 					// Post data to the server
-					oModel.loadData("../xsjs/deletedata.xsjs", oEntry,
-						true, 'POST');
-					oModel.getData().Holidays.splice(oIndex, 1);
-					oModel.refresh(true);
+					// oModel.loadData("../xsjs/deletedata.xsjs", oEntry,
+					// 	true, 'POST');
+					// oModel.getData().Holidays.splice(oIndex, 1);
+					// oModel.refresh(true);
+
+					// Odata v2
+					oModel.remove(oItems[oIndex].getBindingContext().sPath, {
+						success: function (oData) {
+							sap.m.MessageToast.show("Record Removed Successfully");
+						},
+						error: function (err) {
+							sap.m.MessageToast.show("Error" + err);
+						}
+					});
 					openDeleteDialog.close();
 				}
 			}));
