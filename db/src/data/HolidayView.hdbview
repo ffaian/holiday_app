@@ -3,4 +3,5 @@ SELECT
 	"DATE",
 	"PROVINCE",
 	"HOLIDAY_ID"
-FROM "holiday" 
+FROM "holiday"
+

@@ -57,7 +57,7 @@ sap.ui.jsview("sapui5.holiday.App.Holiday.OData.Holiday.App.OData.view.Master", 
 				text: "Holiday"
 			})
 		})];
-
+		
 		// Columns
 		var oTemplate = new sap.m.ColumnListItem({
 			press: [oController.onListPress, oController],

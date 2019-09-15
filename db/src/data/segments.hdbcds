@@ -14,4 +14,12 @@ context segments {
         }
         where
             "B"."LANGU" = 'EN';
+    define view HolidayMD as
+        select from T_HOLIDAY_ID as A
+        {
+            "A"."HOLIDAY_ID",
+            "A"."HOLIDAY_TXT"
+        }
+        where
+            "A"."LANGU" = 'EN';            
 };
